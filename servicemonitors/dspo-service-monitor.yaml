@@ -1,0 +1,36 @@
+apiVersion: monitoring.rhobs/v1
+kind: ServiceMonitor
+metadata:
+  name: dspo-sm
+  labels:
+    rhoai-monitoring: 'true'
+  namespace: redhat-ods-monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+      - redhat-ods-applications
+  endpoints:
+    - relabelings:
+        - action: keep
+          sourceLabels:
+            - __meta_kubernetes_service_name
+          regex: ^(data-science-pipelines-operator-service)$
+          targetLabel: kubernetes_name
+        - action: replace
+          sourceLabels:
+            - __address__
+          regex: '(.+):(\d+)'
+          replacement: '${1}:8080'
+          targetLabel: __address__
+      metricRelabelings:
+        - action: replace
+          replacement: redhat-ods-applications
+          targetLabel: namespace
+      scheme: http
+      honorLabels: true
+  selector:
+    matchExpressions:
+      - values:
+          - 'true'
+        key: app.opendatahub.io/data-science-pipelines-operator
+        operator: In

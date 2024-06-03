@@ -1,0 +1,84 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: codeflare-recording-rules
+  labels:
+    rhoai-monitoring: 'true'
+  namespace: redhat-ods-monitoring
+spec:
+  groups:
+    - name: SLOs - MCAD Controller
+      rules:
+      - expr: |
+          1 - avg_over_time(probe_success{instance=~"mcad-controller-.*", job="user_facing_endpoints_status_codeflare"}[1d])
+        labels:
+          instance: mcad-controller
+        record: probe_success:burnrate1d
+      - expr: |
+          1 - avg_over_time(probe_success{instance=~"mcad-controller-.*", job="user_facing_endpoints_status_codeflare"}[1h])
+        labels:
+          instance: mcad-controller
+        record: probe_success:burnrate1h
+      - expr: |
+          1 - avg_over_time(probe_success{instance=~"mcad-controller-.*", job="user_facing_endpoints_status_codeflare"}[2h])
+        labels:
+          instance: mcad-controller
+        record: probe_success:burnrate2h
+      - expr: |
+          1 - avg_over_time(probe_success{instance=~"mcad-controller-.*", job="user_facing_endpoints_status_codeflare"}[30m])
+        labels:
+          instance: mcad-controller
+        record: probe_success:burnrate30m
+      - expr: |
+          1 - avg_over_time(probe_success{instance=~"mcad-controller-.*", job="user_facing_endpoints_status_codeflare"}[3d])
+        labels:
+          instance: mcad-controller
+        record: probe_success:burnrate3d
+      - expr: |
+          1 - avg_over_time(probe_success{instance=~"mcad-controller-.*", job="user_facing_endpoints_status_codeflare"}[5m])
+        labels:
+          instance: mcad-controller
+        record: probe_success:burnrate5m
+      - expr: |
+          1 - avg_over_time(probe_success{instance=~"mcad-controller-.*", job="user_facing_endpoints_status_codeflare"}[6h])
+        labels:
+          instance: mcad-controller
+        record: probe_success:burnrate6h
+
+    - name: SLOs - CodeFlare Operator
+      rules:
+      - expr: |
+          1 - avg_over_time(probe_success{instance=~"codeflare-operator-.*", job="user_facing_endpoints_status_codeflare"}[1d])
+        labels:
+          instance: codeflare-operator
+        record: probe_success:burnrate1d
+      - expr: |
+          1 - avg_over_time(probe_success{instance=~"codeflare-operator-.*", job="user_facing_endpoints_status_codeflare"}[1h])
+        labels:
+          instance: codeflare-operator
+        record: probe_success:burnrate1h
+      - expr: |
+          1 - avg_over_time(probe_success{instance=~"codeflare-operator-.*", job="user_facing_endpoints_status_codeflare"}[2h])
+        labels:
+          instance: codeflare-operator
+        record: probe_success:burnrate2h
+      - expr: |
+          1 - avg_over_time(probe_success{instance=~"codeflare-operator-.*", job="user_facing_endpoints_status_codeflare"}[30m])
+        labels:
+          instance: codeflare-operator
+        record: probe_success:burnrate30m
+      - expr: |
+          1 - avg_over_time(probe_success{instance=~"codeflare-operator-.*", job="user_facing_endpoints_status_codeflare"}[3d])
+        labels:
+          instance: codeflare-operator
+        record: probe_success:burnrate3d
+      - expr: |
+          1 - avg_over_time(probe_success{instance=~"codeflare-operator-.*", job="user_facing_endpoints_status_codeflare"}[5m])
+        labels:
+          instance: codeflare-operator
+        record: probe_success:burnrate5m
+      - expr: |
+          1 - avg_over_time(probe_success{instance=~"codeflare-operator-.*", job="user_facing_endpoints_status_codeflare"}[6h])
+        labels:
+          instance: codeflare-operator
+        record: probe_success:burnrate6h

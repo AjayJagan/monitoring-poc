@@ -1,0 +1,38 @@
+apiVersion: monitoring.rhobs/v1
+kind: Probe
+metadata:
+  labels:
+    name: codeflare-operator
+    rhoai-monitoring: 'true'
+  name: codeflare-endpoint-status
+  namespace: redhat-ods-monitoring
+spec:
+  interval: 10s
+  jobName: user_facing_endpoints_status_codeflare
+  module: http_2xx
+  prober:
+    path: /probe
+    scheme: https
+    url: 'blackbox-exporter.redhat-ods-monitoring.svc.cluster.local:9114'
+  authorization:
+    credentials:
+      key: token
+      name: prometheus-secret
+  targets:
+    staticConfig:
+      relabelingConfigs:
+        - action: replace
+          sourceLabels:
+            - __address__
+          targetLabel: __param_target
+        - action: replace
+          sourceLabels:
+            - __param_target
+          targetLabel: instance
+        - action: replace
+          replacement: 'blackbox-exporter.redhat-ods-monitoring.svc.cluster.local:9114'
+          targetLabel: __address__
+      static:
+        - 'codeflare-operator-manager-metrics.redhat-ods-applications.svc:8080/metrics'
+  tlsConfig:
+    insecureSkipVerify: true

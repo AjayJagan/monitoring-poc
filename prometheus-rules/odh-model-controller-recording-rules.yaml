@@ -1,0 +1,51 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: odh-model-controller-recording-rules
+  labels:
+    rhoai-monitoring: 'true'
+  namespace: redhat-ods-monitoring
+spec:
+  groups:
+    - name: SLOs - ODH Model Controller
+      rules:
+      - expr: |
+          absent(up{job=~'ODH Model Controller'}) * 0 or vector(1)
+        labels:
+          instance: odh-model-controller
+        record: probe_success
+      - expr: |
+          1 - min(avg_over_time(probe_success{instance="odh-model-controller"}[1d]))
+        labels:
+          instance: odh-model-controller
+        record: probe_success:burnrate1d
+      - expr: |
+          1 - min(avg_over_time(probe_success{instance="odh-model-controller"}[1h]))
+        labels:
+          instance: odh-model-controller
+        record: probe_success:burnrate1h
+      - expr: |
+          1 - min(avg_over_time(probe_success{instance="odh-model-controller"}[2h]))
+        labels:
+          instance: odh-model-controller
+        record: probe_success:burnrate2h
+      - expr: |
+          1 - min(avg_over_time(probe_success{instance="odh-model-controller"}[30m]))
+        labels:
+          instance: odh-model-controller
+        record: probe_success:burnrate30m
+      - expr: |
+          1 - min(avg_over_time(probe_success{instance="odh-model-controller"}[3d]))
+        labels:
+          instance: odh-model-controller
+        record: probe_success:burnrate3d
+      - expr: |
+          1 - min(avg_over_time(probe_success{instance="odh-model-controller"}[5m]))
+        labels:
+          instance: odh-model-controller
+        record: probe_success:burnrate5m
+      - expr: |
+          1 - min(avg_over_time(probe_success{instance="odh-model-controller"}[6h]))
+        labels:
+          instance: odh-model-controller
+        record: probe_success:burnrate6h

@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: operator-recording-rules
+  labels:
+    rhoai-monitoring: 'true'
+  namespace: redhat-ods-monitoring
+spec:
+  groups:
+    - name: SLOs - RHODS Operator v2 
+      interval: 15m
+      rules:
+        - expr: |
+            rate(controller_runtime_reconcile_total{controller="dscinitialization-controller", job="RHOAI Metrics", result!="success"}[15m])
+          record: 'controller_runtime_reconcile_total:rate15m'
+          labels:
+            instance: dscinitialization-controller

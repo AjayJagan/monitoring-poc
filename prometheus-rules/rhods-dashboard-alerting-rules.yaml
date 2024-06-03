@@ -1,0 +1,117 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: rhods-dashboard-alerting-rules
+  labels:
+    rhoai-monitoring: 'true'
+  namespace: redhat-ods-monitoring
+spec:
+  groups:
+    - name: SLOs-haproxy_backend_http_responses_dashboard
+      rules:
+      - alert: RHODS Dashboard Route Error Burn Rate
+        annotations:
+          message: 'High error budget burn for {{ $labels.route }} (current value: {{ $value }}).'
+          triage: 'https://gitlab.cee.redhat.com/service/managed-tenants-sops/-/blob/main/RHODS/RHODS-Dashboard/rhods-error-burn-rate.md'
+          summary: RHODS Dashboard Route Error Burn Rate
+        expr: |
+          sum(haproxy_backend_http_responses_total:burnrate5m{route=~"rhods-dashboard"}) by (route) > (14.40 * (1-0.99950))
+          and
+          sum(haproxy_backend_http_responses_total:burnrate1h{route=~"rhods-dashboard"}) by (route) > (14.40 * (1-0.99950))
+        for: 2m
+        labels:
+          severity: critical
+          namespace: redhat-ods-applications
+      - alert: RHODS Dashboard Route Error Burn Rate
+        annotations:
+          message: 'High error budget burn for {{ $labels.route }} (current value: {{ $value }}).'
+          triage: 'https://gitlab.cee.redhat.com/service/managed-tenants-sops/-/blob/main/RHODS/RHODS-Dashboard/rhods-error-burn-rate.md'
+          summary: RHODS Dashboard Route Error Burn Rate
+        expr: |
+          sum(haproxy_backend_http_responses_total:burnrate30m{route=~"rhods-dashboard"}) by (route) > (6.00 * (1-0.99950))
+          and
+          sum(haproxy_backend_http_responses_total:burnrate6h{route=~"rhods-dashboard"}) by (route) > (6.00 * (1-0.99950))
+        for: 15m
+        labels:
+          severity: critical
+          namespace: redhat-ods-applications
+      - alert: RHODS Dashboard Route Error Burn Rate
+        annotations:
+          message: 'High error budget burn for {{ $labels.route }} (current value: {{ $value }}).'
+          triage: 'https://gitlab.cee.redhat.com/service/managed-tenants-sops/-/blob/main/RHODS/RHODS-Dashboard/rhods-error-burn-rate.md'
+          summary: RHODS Dashboard Route Error Burn Rate
+        expr: |
+          sum(haproxy_backend_http_responses_total:burnrate2h{route=~"rhods-dashboard"}) by (route) > (3.00 * (1-0.99950))
+          and
+          sum(haproxy_backend_http_responses_total:burnrate1d{route=~"rhods-dashboard"}) by (route) > (3.00 * (1-0.99950))
+        for: 1h
+        labels:
+          severity: warning
+          namespace: redhat-ods-applications
+      - alert: RHODS Dashboard Route Error Burn Rate
+        annotations:
+          message: 'High error budget burn for {{ $labels.route }} (current value: {{ $value }}).'
+          triage: 'https://gitlab.cee.redhat.com/service/managed-tenants-sops/-/blob/main/RHODS/RHODS-Dashboard/rhods-error-burn-rate.md'
+          summary: RHODS Dashboard Route Error Burn Rate
+        expr: |
+          sum(haproxy_backend_http_responses_total:burnrate6h{route=~"rhods-dashboard"}) by (route) > (1.00 * (1-0.99950))
+          and
+          sum(haproxy_backend_http_responses_total:burnrate3d{route=~"rhods-dashboard"}) by (route) > (1.00 * (1-0.99950))
+        for: 3h
+        labels:
+          severity: warning
+          namespace: redhat-ods-applications
+    - name: SLOs-probe_success_dashboard
+      rules:
+      - alert: RHODS Dashboard Probe Success Burn Rate
+        annotations:
+          message: 'High error budget burn for {{ $labels.instance }} (current value: {{ $value }}).'
+          triage: "https://gitlab.cee.redhat.com/service/managed-tenants-sops/-/blob/main/RHODS/RHODS-Dashboard/rhods-dashboard-probe-success-burn-rate.md"
+          summary: RHODS Dashboard Probe Success Burn Rate
+        expr: |
+          sum(probe_success:burnrate5m{name=~"rhods-dashboard"}) by (name) > (14.40 * (1-0.98))
+          and
+          sum(probe_success:burnrate1h{name=~"rhods-dashboard"}) by (name) > (14.40 * (1-0.98))
+        for: 2m
+        labels:
+          severity: critical
+          namespace: redhat-ods-applications
+      - alert: RHODS Dashboard Probe Success Burn Rate
+        annotations:
+          message: 'High error budget burn for {{ $labels.instance }} (current value: {{ $value }}).'
+          triage: "https://gitlab.cee.redhat.com/service/managed-tenants-sops/-/blob/main/RHODS/RHODS-Dashboard/rhods-dashboard-probe-success-burn-rate.md"
+          summary: RHODS Dashboard Probe Success Burn Rate
+        expr: |
+          sum(probe_success:burnrate30m{name=~"rhods-dashboard"}) by (name) > (6.00 * (1-0.98))
+          and
+          sum(probe_success:burnrate6h{name=~"rhods-dashboard"}) by (name) > (6.00 * (1-0.98))
+        for: 15m
+        labels:
+          severity: critical
+          namespace: redhat-ods-applications
+      - alert: RHODS Dashboard Probe Success Burn Rate
+        annotations:
+          message: 'High error budget burn for {{ $labels.instance }} (current value: {{ $value }}).'
+          triage: "https://gitlab.cee.redhat.com/service/managed-tenants-sops/-/blob/main/RHODS/RHODS-Dashboard/rhods-dashboard-probe-success-burn-rate.md"
+          summary: RHODS Dashboard Probe Success Burn Rate
+        expr: |
+          sum(probe_success:burnrate2h{name=~"rhods-dashboard"}) by (name) > (3.00 * (1-0.98))
+          and
+          sum(probe_success:burnrate1d{name=~"rhods-dashboard"}) by (name) > (3.00 * (1-0.98))
+        for: 1h
+        labels:
+          severity: warning
+          namespace: redhat-ods-applications
+      - alert: RHODS Dashboard Probe Success Burn Rate
+        annotations:
+          message: 'High error budget burn for {{ $labels.instance }} (current value: {{ $value }}).'
+          triage: "https://gitlab.cee.redhat.com/service/managed-tenants-sops/-/blob/main/RHODS/RHODS-Dashboard/rhods-dashboard-probe-success-burn-rate.md"
+          summary: RHODS Dashboard Probe Success Burn Rate
+        expr: |
+          sum(probe_success:burnrate6h{name=~"rhods-dashboard"}) by (name) > (1.00 * (1-0.98))
+          and
+          sum(probe_success:burnrate3d{name=~"rhods-dashboard"}) by (name) > (1.00 * (1-0.98))
+        for: 3h
+        labels:
+          severity: warning
+          namespace: redhat-ods-applications

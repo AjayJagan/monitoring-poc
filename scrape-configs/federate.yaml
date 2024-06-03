@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: prometheus-secret
+  namespace: redhat-ods-monitoring
+  annotations:
+    kubernetes.io/service-account.name: rhoai-monitoring-stack-prometheus
+type: kubernetes.io/service-account-token
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: rhoai-monitoring-stack-view
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-monitoring-view
+subjects:
+- kind: ServiceAccount
+  name: rhoai-monitoring-stack-prometheus
+  namespace: redhat-ods-monitoring
+---
+apiVersion: monitoring.rhobs/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: federate-prometheus-sc
+  labels:
+    rhoai-monitoring: 'true'
+  namespace: redhat-ods-monitoring
+spec:
+  staticConfigs:
+    - targets:
+        - 'prometheus-k8s.openshift-monitoring.svc.cluster.local:9091'
+  authorization:
+    credentials:
+      key: token
+      name: prometheus-secret
+  tlsConfig:
+    ca:
+      configMap:
+        key: service-ca.crt
+        name: openshift-service-ca.crt
+    serverName: prometheus-k8s.openshift-monitoring.svc
+  scheme: HTTPS
+  honorLabels: true
+  scrapeInterval: 30s
+  metricsPath: /federate
+  params:
+    'match[]':
+      - '{__name__= "haproxy_backend_http_responses_total"}'
+      - '{__name__= "controller_runtime_reconcile_total"}'
+      - '{__name__= "container_cpu_usage_seconds_total"}'
+      - '{__name__= "container_memory_rss"}'
+      - '{__name__= "kubelet_volume_stats_used_bytes"}'
+      - '{__name__= "kubelet_volume_stats_capacity_bytes"}'
+      - '{__name__= "kube_pod_container_status_waiting_reason"}'
+      - '{__name__= "kube_pod_container_status_restarts_total"}'
+      - '{__name__= "kube_pod_container_status_terminated_reason"}'
+      - '{__name__= "openshift_build_status_phase_total"}'
+      - '{__name__= "kube_statefulset_replicas"}'

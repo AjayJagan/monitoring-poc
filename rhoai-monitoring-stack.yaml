@@ -1,0 +1,30 @@
+apiVersion: monitoring.rhobs/v1alpha1
+kind: MonitoringStack
+metadata:
+  labels:
+    rhoai-monitoring: 'true'
+  name: rhoai-monitoring-stack
+  namesapce: redhat-ods-monitoring
+spec:
+  alertmanagerConfig:
+    disabled: false
+  logLevel: debug
+  namespaceSelector:
+    matchExpressions:
+      - key: opendatahub.io/generated-namespace
+        operator: Exists
+  prometheusConfig:
+    scrapeInterval: 10s
+    replicas: 2
+  resourceSelector: {}
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  retention: 1d
+
+# TODOS
+# Configure a PVC for prometheus
